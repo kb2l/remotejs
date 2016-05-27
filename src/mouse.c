@@ -2,6 +2,8 @@
 #include "screen.h"
 #include "deadbeef_rand.h"
 #include "microsleep.h"
+#include <pthread.h>
+#include <stdio.h>
 
 #include <math.h> /* For floor() */
 
@@ -83,8 +85,7 @@ void calculateDeltas(CGEventRef *event, MMPoint point)
 }
 #endif
 
-
-void detectMouseClick()
+void detectMouseClickThread(void *x_void_ptr)
 {
 #if defined(USE_X11)
 	Display* display;
@@ -94,7 +95,6 @@ void detectMouseClick()
     XEvent report;
     XButtonEvent *xb = (XButtonEvent *)&report;
     int i;
-    Cursor cursor;
     display = XOpenDisplay(0);
     if (display == NULL){
         perror("Cannot connect to X server");
@@ -103,7 +103,6 @@ void detectMouseClick()
     screen_num = DefaultScreen(display);
     screen = XScreenOfDisplay(display, screen_num);
     root_win = RootWindow(display, XScreenNumberOfScreen(screen));
-    //cursor = XCreateFontCursor(display, XC_crosshair);
     i = XGrabPointer(display, root_win, False,
                 ButtonReleaseMask | ButtonPressMask|Button1MotionMask, GrabModeSync,
                 GrabModeAsync, root_win, None, CurrentTime);
@@ -131,6 +130,26 @@ void detectMouseClick()
     XCloseDisplay( display );
 	#endif
 }
+
+void detectMouseClick()
+{
+	/* this variable is our reference to the second thread */
+	pthread_t inc_x_thread;
+
+	/* create a second thread which executes inc_x(&x) */
+  if(pthread_create(&inc_x_thread, NULL, detectMouseClickThread, NULL))
+  {
+    fprintf(stderr, "Error creating thread\n");
+  }
+
+	printf("thread is successfully created!!");
+
+	// if(pthread_join(inc_x_thread, NULL))
+	// {
+	// 	fprintf(stderr, "Error joining thread\n");
+	// }
+}
+
 /**
  * Move the mouse to a specific point.
  * @param point The coordinates to move the mouse to (x, y).
