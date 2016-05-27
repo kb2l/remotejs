@@ -18,11 +18,19 @@ net.createServer(function(sock) {
         //console.log('DATA ' + sock.remoteAddress + ': ' + data);
         // Write the data back to the socket, the client will receive it as data from the server
         sock.write('ok');
-        console.log ("accuse reception: " + data);
+        //console.log ("accuse reception: " + data);
         data = data + "";
-        var arr = data.split(",").map(function(val) { return +val +1;});
-        robot.moveMouse(arr[0], arr[1]);
+        var arr = data.split(",");
+        var x= arr[0];
+        var y=arr[1];
+        robot.moveMouse(x,y);
 
+
+	if("true"==arr[2])
+	{
+	  console.log("Left mouse is clicked");
+	  robot.mouseClick("left");
+  	}
     });
 
     // Add a 'close' event handler to this instance of socket
