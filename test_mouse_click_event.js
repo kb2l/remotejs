@@ -1,5 +1,7 @@
 var robot = require('/home/kbelaid/remotejs/build/Release/robotjs');
-var method = function() {
+var Worker = require('webworker-threads').Worker;
+
+var child_proc_mouse_detect = function() {
     var exec = require('child_process').exec;
     exec('node ./mouseClickDetect.js', function(error, stdout, stderr) {
         console.log('stdout: ' + stdout);
@@ -7,13 +9,13 @@ var method = function() {
         if (error !== null) {
             console.log('exec error: ' + error);
         }
-        method();
+        child_proc_mouse_detect();
     });
 };
 
-method();
-console.log("next");
+child_proc_mouse_detect();
 
+console.log("next");
 //Speed up the mouse.
 robot.setMouseDelay(2);
 
