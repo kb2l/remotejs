@@ -112,7 +112,7 @@ void detectMouseClickThread(void *x_void_ptr)
         exit(-1);
     }
 
-    while(1)
+    //while(1)
     {
         XAllowEvents(display, SyncPointer, CurrentTime);
         XWindowEvent(display, root_win, ButtonPressMask | ButtonReleaseMask, &report);
@@ -125,8 +125,9 @@ void detectMouseClickThread(void *x_void_ptr)
             break;
         }
     }
-    XFlush(display);
-    XUngrabServer(display);
+
+		XFlush(display);
+		XUngrabServer(display);
     XCloseDisplay( display );
 	#endif
 }
@@ -142,12 +143,10 @@ void detectMouseClick()
     fprintf(stderr, "Error creating thread\n");
   }
 
-	printf("thread is successfully created!!");
-
-	// if(pthread_join(inc_x_thread, NULL))
-	// {
-	// 	fprintf(stderr, "Error joining thread\n");
-	// }
+	 if(pthread_join(inc_x_thread, NULL))
+	 {
+	 	fprintf(stderr, "Error joining thread\n");
+	 }
 }
 
 /**
