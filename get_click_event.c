@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-#include <X11/cursorfont.h>
 
 int main()
 {
@@ -27,11 +26,14 @@ int main()
     i = XGrabPointer(display, root_win, False,
                 ButtonReleaseMask | ButtonPressMask|Button1MotionMask, GrabModeSync,
                 GrabModeAsync, root_win, None, CurrentTime);
-    if(i != GrabSuccess){
+    if(i != GrabSuccess)
+    {
         perror("Can't grab the mouse");
         exit(-1);
     }
-    for(i = 0; i < 10; i++){
+
+    while(1)
+    {
         XAllowEvents(display, SyncPointer, CurrentTime);
         XWindowEvent(display, root_win, ButtonPressMask | ButtonReleaseMask, &report);
         switch(report.type){

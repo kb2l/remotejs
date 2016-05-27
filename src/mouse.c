@@ -84,6 +84,53 @@ void calculateDeltas(CGEventRef *event, MMPoint point)
 #endif
 
 
+void detectMouseClick()
+{
+#if defined(USE_X11)
+	Display* display;
+    int screen_num;
+    Screen *screen;
+    Window root_win;
+    XEvent report;
+    XButtonEvent *xb = (XButtonEvent *)&report;
+    int i;
+    Cursor cursor;
+    display = XOpenDisplay(0);
+    if (display == NULL){
+        perror("Cannot connect to X server");
+        exit (-1);
+    }
+    screen_num = DefaultScreen(display);
+    screen = XScreenOfDisplay(display, screen_num);
+    root_win = RootWindow(display, XScreenNumberOfScreen(screen));
+    //cursor = XCreateFontCursor(display, XC_crosshair);
+    i = XGrabPointer(display, root_win, False,
+                ButtonReleaseMask | ButtonPressMask|Button1MotionMask, GrabModeSync,
+                GrabModeAsync, root_win, None, CurrentTime);
+    if(i != GrabSuccess)
+    {
+        perror("Can't grab the mouse");
+        exit(-1);
+    }
+
+    while(1)
+    {
+        XAllowEvents(display, SyncPointer, CurrentTime);
+        XWindowEvent(display, root_win, ButtonPressMask | ButtonReleaseMask, &report);
+        switch(report.type){
+            case ButtonPress:
+                printf("Press @ (%d, %d)\n", xb->x_root, xb->y_root);
+            break;
+            case ButtonRelease:
+                printf("Release @ (%d, %d)\n", xb->x_root, xb->y_root);
+            break;
+        }
+    }
+    XFlush(display);
+    XUngrabServer(display);
+    XCloseDisplay( display );
+	#endif
+}
 /**
  * Move the mouse to a specific point.
  * @param point The coordinates to move the mouse to (x, y).
@@ -118,7 +165,7 @@ void moveMouse(MMPoint point)
 	mouseInput.mi.dwExtraInfo = 0;
 	mouseInput.mi.mouseData = 0;
 	SendInput(1, &mouseInput, sizeof(mouseInput));
-	
+
 #endif
 }
 
@@ -202,7 +249,7 @@ void clickMouse(MMMouseButton button)
  */
 void doubleClick(MMMouseButton button)
 {
-	
+
 #if defined(IS_MACOSX)
 
 	/* Double click for Mac. */
@@ -210,17 +257,17 @@ void doubleClick(MMMouseButton button)
 	const CGEventType mouseTypeDown = MMMouseToCGEventType(true, button);
 	const CGEventType mouseTypeUP = MMMouseToCGEventType(false, button);
 
-	CGEventRef event = CGEventCreateMouseEvent(NULL, mouseTypeDown, currentPos, kCGMouseButtonLeft);  
-	
-	/* Set event to double click. */						
-	CGEventSetIntegerValueField(event, kCGMouseEventClickState, 2);
-											
-	CGEventPost(kCGHIDEventTap, event);  
-																
-	CGEventSetType(event, mouseTypeUP);  
-	CGEventPost(kCGHIDEventTap, event);  
+	CGEventRef event = CGEventCreateMouseEvent(NULL, mouseTypeDown, currentPos, kCGMouseButtonLeft);
 
-	CFRelease(event); 
+	/* Set event to double click. */
+	CGEventSetIntegerValueField(event, kCGMouseEventClickState, 2);
+
+	CGEventPost(kCGHIDEventTap, event);
+
+	CGEventSetType(event, mouseTypeUP);
+	CGEventPost(kCGHIDEventTap, event);
+
+	CFRelease(event);
 
 #else
 
@@ -228,13 +275,13 @@ void doubleClick(MMMouseButton button)
 	clickMouse(button);
 	microsleep(200);
 	clickMouse(button);
-	
+
 #endif
 }
 
 /**
  * Function used to scroll the screen in the required direction.
- * This uses the magnitude to scroll the required amount in the direction. 
+ * This uses the magnitude to scroll the required amount in the direction.
  * TODO Requires further fine tuning based on the requirements.
  */
 void scrollMouse(int scrollMagnitude, MMMouseWheelDirection scrollDirection)
