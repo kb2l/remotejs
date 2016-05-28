@@ -1,5 +1,6 @@
 var net = require('net');
 var robot = require('/home/kbelaid/remotejs/build/Release/robotjs');
+
 var HOST = '192.168.1.86';
 var PORT = 6969;
 
@@ -17,8 +18,6 @@ var child_proc_mouse_detect = function() {
         child_proc_mouse_detect();
     });
 };
-
-
 
 var client = new net.Socket();
 client.connect(PORT, HOST, function() {

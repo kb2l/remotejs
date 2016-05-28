@@ -1,0 +1,2 @@
+ssh pi@192.168.1.86 -t '/home/pi/remotejs_start_server.sh; bash -l'
+#node src/tcpIp/client.js
