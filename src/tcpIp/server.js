@@ -28,7 +28,7 @@ net.createServer(function(sock) {
 
 	if("true"==arr[2])
 	{
-	  console.log("Left mouse is clicked");
+	  //console.log("Left mouse is clicked");
 	  robot.mouseClick("left");
   	}
     });
