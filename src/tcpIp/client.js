@@ -1,6 +1,5 @@
 var net = require('net');
 var robot = require('/home/kbelaid/remotejs/build/Release/robotjs');
-var Worker = require('webworker-threads').Worker;
 var HOST = '192.168.1.86';
 var PORT = 6969;
 
