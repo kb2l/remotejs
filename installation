@@ -1,0 +1,17 @@
+sudo apt-get install nodejs
+sudo ln -s /usr/bin/nodejs /usr/bin/node
+sudo apt-get install node-gyp
+sudo apt-get install g++ gcc
+sudo apt-get install libx11-dev
+sudo apt-get install libxtst-dev
+sudo apt-get install npm
+sudo apt-get install libpng-dev
+git clone https://github.com/octalmage/robotjs.git
+cd robotjs/
+npm install nan
+node-gyp configure
+node-gyp build
+git clone https://github.com/kb2l/remotejs.git
+cd remotejs
+node-gyp configure
+node-gyp build

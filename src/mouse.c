@@ -122,10 +122,10 @@ void CatchMouseClickEvent_thread(void *dummy)
 				 switch(report.xbutton.button)
 				 {
 					 case Button1:
-					 		 printf("Press Left @ (%d, %d)\n", xb->x_root, xb->y_root);
+					 		 printf("left,%d, %d\n", xb->x_root, xb->y_root);
 							 break;
 					 case Button3:
-							 printf("Press Right @ (%d, %d)\n", xb->x_root, xb->y_root);
+							 printf("right,%d, %d\n", xb->x_root, xb->y_root);
 							 break;
 					 default:
 							 break;

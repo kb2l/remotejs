@@ -1,1 +1,2 @@
-node src/tcpIp/client.js
+pkill -9 node;
+node src/tcpIp/client.js;

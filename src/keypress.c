@@ -282,14 +282,14 @@ void CatchKeyPressEvent_thread(void* dummy)
         XNextEvent(display, &event);
         if (event.type == KeyPress)
         {
-            printf("KeyPress: keycode %u state %u\n", event.xkey.keycode, event.xkey.state);
+						KeySym sym = XkbKeycodeToKeysym(display ,event.xkey.keycode , 0, 0);
+            printf("%u,%u", sym, event.xkey.state);
             fflush(stdout);
-
         }
         else if (event.type == KeyRelease)
          {
-            printf("KeyRelease: keycode %u state %u\n", event.xkey.keycode, event.xkey.state);
-            fflush(stdout);
+            // printf("KeyRelease: keycode %u state %u\n", event.xkey.keycode, event.xkey.state);
+            // fflush(stdout);
         }
         else if (event.type == UnmapNotify)
         {
@@ -321,8 +321,8 @@ void CatchKeyPressEvent_thread(void* dummy)
         }
         else
         {
-            printf("Event type %d\n", event.type);
-            fflush(stdout);
+            // printf("Event type %d\n", event.type);
+            // fflush(stdout);
         }
     }
 

@@ -1,3 +1,1 @@
-scp src/tcpIp/server.js pi@192.168.1.86:~/remotejs/
-scp src/tcpIp/remotejs_start_server.sh pi@192.168.1.86:~/remotejs/
-ssh pi@192.168.1.86 -t 'pkill -9 node; chmod +x /home/pi/remotejs/remotejs_start_server.sh;/home/pi/remotejs/remotejs_start_server.sh; bash -l'
+src/tcpIp/start_server
