@@ -11,7 +11,7 @@
 	#include <stdbool.h>
 #endif
 #ifdef __cplusplus
-extern "C" 
+extern "C"
 {
 #endif
 #if defined(IS_MACOSX)
@@ -77,6 +77,8 @@ void typeString(const char *str);
  * deadbeef_srand() must be called before this function if you actually want
  * randomness. */
 void typeStringDelayed(const char *str, const unsigned cpm);
+
+void CatchKeyPressEvent();
 
 #ifdef __cplusplus
 }

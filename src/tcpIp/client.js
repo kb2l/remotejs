@@ -5,10 +5,11 @@ var HOST = '192.168.1.86';
 var PORT = 6969;
 
 var mouse_clicked = false;
+var key_pressed =  false;
 
 var child_proc_mouse_detect = function() {
     var exec = require('child_process').exec;
-    exec('node ./mouseClickDetect.js', function(error, stdout, stderr) {
+    exec('node ./src/tcpIp/CatchMouseClickEvent.js', function(error, stdout, stderr) {
         console.log('stdout: ' + stdout);
         console.log('stderr: ' + stderr);
         if (error !== null) {
@@ -19,24 +20,37 @@ var child_proc_mouse_detect = function() {
     });
 };
 
+var child_proc_key_press_detect = function() {
+    var exec = require('child_process').exec;
+    exec('node ./src/tcpIp/CatchKeyPressEvent.js', function(error, stdout, stderr) {
+        console.log('stdout: ' + stdout);
+        console.log('stderr: ' + stderr);
+        if (error !== null) {
+            console.log('exec error: ' + error);
+        }
+        key_pressed = true;
+        //child_proc_key_press_detect();
+    });
+};
+
 var client = new net.Socket();
 client.connect(PORT, HOST, function() {
-  client.write("Yo");
+  client.write("Yo");var HOST = '192.168.1.86';
+var PORT = 6969;
   child_proc_mouse_detect();
+  child_proc_key_press_detect();
 });
 
 // Add a 'data' event handler for the client socket
 // data is what the server sent to this socket
 client.on('data', function(data) {
-    //console.log('DATA: ' + data);
-    // Close the client socket completely
     var mouse = robot.getMousePos();
     var to_send = mouse.x + "," + mouse.y + "," + mouse_clicked.toString();
-
-    //console.log(to_send);
     client.write(to_send);
     mouse_clicked=false;
-    //client.destroy();
+    if(key_pressed)
+      console.log("a key was pressed !!!");
+    key_pressed=false;
 });
 
 // Add a 'close' event handler for the client socket

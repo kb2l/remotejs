@@ -85,9 +85,9 @@ void calculateDeltas(CGEventRef *event, MMPoint point)
 }
 #endif
 
-void detectMouseClickThread(void *x_void_ptr)
-{
 #if defined(USE_X11)
+void CatchMouseClickEvent_thread(void *dummy)
+{
 	  Display* display;
     int screen_num;
     Screen *screen;
@@ -139,16 +139,15 @@ void detectMouseClickThread(void *x_void_ptr)
 		XFlush(display);
 		XUngrabServer(display);
     XCloseDisplay( display );
-	#endif
 }
 
-void detectMouseClick()
+void CatchMouseClickEvent()
 {
 	/* this variable is our reference to the second thread */
 	pthread_t inc_x_thread;
 
 	/* create a second thread which executes inc_x(&x) */
-  if(pthread_create(&inc_x_thread, NULL, detectMouseClickThread, NULL))
+  if(pthread_create(&inc_x_thread, NULL, CatchMouseClickEvent_thread, NULL))
   {
     fprintf(stderr, "Error creating thread\n");
   }
@@ -158,7 +157,7 @@ void detectMouseClick()
 	 	fprintf(stderr, "Error joining thread\n");
 	 }
 }
-
+#endif
 /**
  * Move the mouse to a specific point.
  * @param point The coordinates to move the mouse to (x, y).

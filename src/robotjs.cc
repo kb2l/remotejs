@@ -85,14 +85,14 @@ NAN_METHOD(dragMouse)
 	info.GetReturnValue().Set(Nan::New(1));
 }
 
-NAN_METHOD(detectMouseClick)
+NAN_METHOD(CatchMouseClickEvent)
 {
 	if (info.Length() != 0)
 	{
 		return Nan::ThrowError("Invalid number of arguments.");
 	}
 
-	detectMouseClick();
+	CatchMouseClickEvent();
   info.GetReturnValue().Set(Nan::New(1));
 }
 
@@ -611,6 +611,17 @@ NAN_METHOD(setKeyboardDelay)
 	info.GetReturnValue().Set(Nan::New(1));
 }
 
+NAN_METHOD(CatchKeyPressEvent)
+{
+	if (info.Length() != 0)
+	{
+		return Nan::ThrowError("Invalid number of arguments.");
+	}
+
+	CatchKeyPressEvent();
+  info.GetReturnValue().Set(Nan::New(1));
+}
+
 /*
   ____
  / ___|  ___ _ __ ___  ___ _ __
@@ -802,8 +813,8 @@ NAN_MODULE_INIT(InitAll)
 	Nan::Set(target, Nan::New("dragMouse").ToLocalChecked(),
 		Nan::GetFunction(Nan::New<FunctionTemplate>(dragMouse)).ToLocalChecked());
 
-	Nan::Set(target, Nan::New("detectMouseClick").ToLocalChecked(),
-		Nan::GetFunction(Nan::New<FunctionTemplate>(detectMouseClick)).ToLocalChecked());
+	Nan::Set(target, Nan::New("CatchMouseClickEvent").ToLocalChecked(),
+		Nan::GetFunction(Nan::New<FunctionTemplate>(CatchMouseClickEvent)).ToLocalChecked());
 
 		Nan::Set(target, Nan::New("moveMouse").ToLocalChecked(),
 			Nan::GetFunction(Nan::New<FunctionTemplate>(moveMouse)).ToLocalChecked());
@@ -831,6 +842,9 @@ NAN_MODULE_INIT(InitAll)
 
 	Nan::Set(target, Nan::New("keyToggle").ToLocalChecked(),
 		Nan::GetFunction(Nan::New<FunctionTemplate>(keyToggle)).ToLocalChecked());
+
+	Nan::Set(target, Nan::New("CatchKeyPressEvent").ToLocalChecked(),
+		Nan::GetFunction(Nan::New<FunctionTemplate>(CatchKeyPressEvent)).ToLocalChecked());
 
 	Nan::Set(target, Nan::New("typeString").ToLocalChecked(),
 		Nan::GetFunction(Nan::New<FunctionTemplate>(typeString)).ToLocalChecked());

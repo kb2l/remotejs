@@ -57,7 +57,7 @@ enum __MMMouseWheelDirection
 };
 typedef int MMMouseWheelDirection;
 
-void detectMouseClick();
+void CatchMouseClickEvent();
 
 /* Immediately moves the mouse to the given point on-screen.
  * It is up to the caller to ensure that this point is within the

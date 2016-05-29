@@ -1,5 +1,5 @@
 var test = require('tape');
-var robot = require('..');
+var robot = require('/home/kbelaid/remotejs/build/Release/robotjs');
 
 //TODO: Need tests for keyToggle, typeString, typeStringDelayed, and setKeyboardDelay.
 

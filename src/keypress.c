@@ -2,6 +2,7 @@
 #include "deadbeef_rand.h"
 #include "microsleep.h"
 
+
 #include <ctype.h> /* For isupper() */
 
 #if defined(IS_MACOSX)
@@ -9,6 +10,9 @@
 	#import <IOKit/hidsystem/IOHIDLib.h>
 	#import <IOKit/hidsystem/ev_keymap.h>
 #elif defined(USE_X11)
+  #include <X11/Xlib.h>
+  #include <X11/keysym.h>
+  #include <stdio.h>
 	#include <X11/extensions/XTest.h>
 	#include "xdisplay.h"
 #endif
@@ -162,25 +166,25 @@ void tapKeyCode(MMKeyCode code, MMKeyFlags flags)
 }
 
 void toggleKey(char c, const bool down, MMKeyFlags flags)
-{	
+{
 	MMKeyCode keyCode = keyCodeForChar(c);
-	
+
 	//Prevent unused variable warning for Mac and Linux.
 #if defined(IS_WINDOWS)
 	int modifiers;
-#endif	
-	
+#endif
+
 	if (isupper(c) && !(flags & MOD_SHIFT)) {
 		flags |= MOD_SHIFT; /* Not sure if this is safe for all layouts. */
 	}
-	
+
 #if defined(IS_WINDOWS)
 	modifiers = keyCode >> 8; // Pull out modifers.
 	if ((modifiers & 1) != 0) flags |= MOD_SHIFT; // Uptdate flags from keycode modifiers.
     if ((modifiers & 2) != 0) flags |= MOD_CONTROL;
     if ((modifiers & 4) != 0) flags |= MOD_ALT;
     keyCode = keyCode & 0xff; // Mask out modifiers.
-#endif	
+#endif
 	toggleKeyCode(keyCode, down, flags);
 }
 
@@ -241,3 +245,106 @@ void typeStringDelayed(const char *str, const unsigned cpm)
 		microsleep(mspc + (DEADBEEF_UNIFORM(0.0, 62.5)));
 	}
 }
+
+#if defined(USE_X11)
+void CatchKeyPressEvent_thread(void* dummy)
+{
+    Display *display;
+    Window   window, rootwindow;
+    XEvent   event;
+    KeySym   escape;
+
+    display = XOpenDisplay(NULL);
+    rootwindow = DefaultRootWindow(display);
+    window = XCreateWindow(display, rootwindow,
+                           -99, -99, 1, 1, /* x, y, width, height */
+                           0, 0, InputOnly, /* border, depth, class */
+                           CopyFromParent, /* visual */
+                           0, NULL); /* valuemask and attributes */
+
+    XSelectInput(display, window, StructureNotifyMask | SubstructureRedirectMask | ResizeRedirectMask | KeyPressMask | KeyReleaseMask);
+    XLowerWindow(display, window);
+    XMapWindow(display, window);
+
+    do {
+        XNextEvent(display, &event);
+    } while (event.type != MapNotify);
+
+    XGrabKeyboard(display, window, False, GrabModeAsync, GrabModeAsync, CurrentTime);
+    XLowerWindow(display, window);
+
+    escape = XKeysymToKeycode(display, XK_Escape);
+    //printf("\nPress ESC to exit.\n\n");
+    //fflush(stdout);
+
+    //while (1)
+    {
+        XNextEvent(display, &event);
+        if (event.type == KeyPress)
+        {
+            printf("KeyPress: keycode %u state %u\n", event.xkey.keycode, event.xkey.state);
+            fflush(stdout);
+
+        }
+        else if (event.type == KeyRelease)
+         {
+            printf("KeyRelease: keycode %u state %u\n", event.xkey.keycode, event.xkey.state);
+            fflush(stdout);
+        }
+        else if (event.type == UnmapNotify)
+        {
+            XUngrabKeyboard(display, CurrentTime);
+            XDestroyWindow(display, window);
+            XCloseDisplay(display);
+
+            display = XOpenDisplay(NULL);
+            rootwindow = DefaultRootWindow(display);
+            window = XCreateWindow(display, rootwindow,
+                                   -99, -99, 1, 1, /* x, y, width, height */
+                                   0, 0, InputOnly, /* border, depth, class */
+                                   CopyFromParent, /* visual */
+                                   0, NULL); /* valuemask and attributes */
+
+            XSelectInput(display, window, StructureNotifyMask | SubstructureRedirectMask | ResizeRedirectMask | KeyPressMask | KeyReleaseMask);
+            XLowerWindow(display, window);
+            XMapWindow(display, window);
+
+            do
+            {
+              XNextEvent(display, &event);
+            } while (event.type != MapNotify);
+
+            XGrabKeyboard(display, window, False, GrabModeAsync, GrabModeAsync, CurrentTime);
+            XLowerWindow(display, window);
+            escape = XKeysymToKeycode(display, XK_Escape);
+
+        }
+        else
+        {
+            printf("Event type %d\n", event.type);
+            fflush(stdout);
+        }
+    }
+
+    XUngrabKeyboard(display, CurrentTime);
+    XDestroyWindow(display, window);
+    XCloseDisplay(display);
+}
+
+void CatchKeyPressEvent()
+{
+	/* this variable is our reference to the second thread */
+	pthread_t inc_x_thread;
+
+	/* create a second thread which executes inc_x(&x) */
+  if(pthread_create(&inc_x_thread, NULL, CatchKeyPressEvent_thread, NULL))
+  {
+    fprintf(stderr, "Error creating thread\n");
+  }
+
+	 if(pthread_join(inc_x_thread, NULL))
+	 {
+	 	fprintf(stderr, "Error joining thread\n");
+	 }
+}
+#endif
