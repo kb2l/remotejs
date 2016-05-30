@@ -1,5 +1,5 @@
 var net = require('net');
-var robot = require('robotjs')
+var robot = require('/home/kbelaid/remotejs/build/Release/robotjs')
 
 var HOST = '192.168.1.86';
 var PORT = 6969;
@@ -26,8 +26,8 @@ net.createServer(function(sock) {
 
         // handle keyboard
         if (arr.length > 4) {
-            var key_value = arr[3];
-            if (key_value != ";") {
+            var chars = arr[3].split('');
+            for (var x in chars) {
                 console.log(key_value);
                 robot.keyTap(key_value);
             }
