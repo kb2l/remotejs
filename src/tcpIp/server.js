@@ -12,13 +12,6 @@ mouse.clicked = "False";
 net.createServer(function(sock) {
 
     sock.on('data', function(data) {
-        try {
-
-        } catch (e) {
-
-        } finally {
-
-        }
         data = data + "";
         var arr = data.split(",");
         // handle mouse
