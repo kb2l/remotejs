@@ -1,2 +1,8 @@
 var robot = require('/home/kbelaid/remotejs/build/Release/robotjs');
-robot.keyTap()
+try {
+    robot.keyTap()
+} catch (e) {
+    console.log(e);
+} finally {
+    console.log("Finaly");
+}

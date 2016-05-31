@@ -12,6 +12,13 @@ mouse.clicked = "False";
 net.createServer(function(sock) {
 
     sock.on('data', function(data) {
+        try {
+
+        } catch (e) {
+
+        } finally {
+
+        }
         data = data + "";
         var arr = data.split(",");
         // handle mouse
@@ -28,8 +35,11 @@ net.createServer(function(sock) {
         if (arr.length > 4) {
             var chars = arr[3].split('');
             for (var x in chars) {
-                console.log(key_value);
-                robot.keyTap(key_value);
+                try {
+                    robot.keyTap(key_value);
+                } catch (e) {
+                    console.log("key " + key_value + " is not handled yet!!");
+                }
             }
         }
         sock.write('ok');
