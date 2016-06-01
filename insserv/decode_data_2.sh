@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#Cracking differently
+
 xinput test-xi2 --root | perl -nle '
   BEGIN {
     $"=",";
@@ -9,7 +11,7 @@ xinput test-xi2 --root | perl -nle '
     while (<X>) {if (/^(\w+)\s+(\w*)/){($k=$2)=~s/_[LR]$//;$m[$i++]=$k||$1}}
     close X;
   }
-  
+
   if (/^EVENT type.*\((.*)\)/) {$e = $1}
   elsif (/detail: (\d+)/) {$d=$1}
   elsif (/modifiers:.*effective: (.*)/) {
